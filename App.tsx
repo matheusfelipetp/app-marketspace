@@ -1,4 +1,5 @@
 import { Loading } from '@components/Loading';
+import { AuthProvider } from '@contexts/AuthContext';
 import {
   Karla_400Regular,
   Karla_700Bold,
@@ -20,7 +21,7 @@ export default function App() {
         translucent
       />
 
-      {fontsLoaded ? <Routes /> : <Loading />}
+      <AuthProvider>{fontsLoaded ? <Routes /> : <Loading />}</AuthProvider>
     </NativeBaseProvider>
   );
 }

@@ -17,16 +17,28 @@ export function SignInHeader({
       <Center>
         <Image
           source={LogoImg}
+          defaultSource={LogoImg}
           alt="Logo MarketSpace"
-          width={size === 'small' ? 20 : 32}
-          height={size === 'small' ? 16 : 20}
+          width={size === 'small' ? 16 : 32}
+          height={size === 'small' ? 12 : 20}
         />
 
-        <Heading color="gray.700" fontSize="xxl" fontFamily="heading" mt={4}>
+        <Heading
+          color="gray.700"
+          fontSize={size === 'small' ? 'xl' : 'xxl'}
+          fontFamily="heading"
+          mt={2}
+        >
           {title}
         </Heading>
 
-        <Text color="gray.500" fontSize="sm" fontFamily="body">
+        <Text
+          color="gray.500"
+          fontSize="sm"
+          fontFamily="body"
+          mt={1}
+          textAlign="center"
+        >
           {text}
         </Text>
       </Center>

@@ -3,9 +3,19 @@ import { Input } from '@components/Input';
 import { SignInHeader } from '@components/SignInHeader';
 import { MaterialIcons } from '@expo/vector-icons';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useAuth } from '@hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes';
-import { Center, Icon, Pressable, ScrollView, Text, VStack } from 'native-base';
+import { AppError } from '@utils/AppError';
+import {
+  Center,
+  Icon,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+  useToast,
+} from 'native-base';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -24,6 +34,9 @@ export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const { signIn } = useAuth();
+  const toast = useToast();
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>();
 
   const {
@@ -38,9 +51,31 @@ export function SignIn() {
     navigation.navigate('signUp');
   };
 
-  const handleSignIn = (data: FormDataProps) => {
-    setIsLoading(true);
-    console.log(data);
+  const handleSignIn = async (data: FormDataProps) => {
+    try {
+      setIsLoading(true);
+
+      const { email, password } = data;
+      await signIn(email, password);
+
+      toast.show({
+        title: 'Login realizado com sucesso!',
+        placement: 'top',
+        bgColor: 'green.300',
+      });
+    } catch (error) {
+      const isAppError = error instanceof AppError;
+
+      toast.show({
+        title: isAppError
+          ? error.message
+          : 'Erro ao entrar. Tente novamente mais tarde.',
+        placement: 'top',
+        bgColor: 'red.300',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -48,7 +83,7 @@ export function SignIn() {
       contentContainerStyle={{ flexGrow: 1 }}
       showsVerticalScrollIndicator={false}
     >
-      <VStack pt={24} pb={18} px={10}>
+      <VStack pt={24} px={10}>
         <SignInHeader title="marketspace" text="Seu espaço de compra e venda" />
 
         <Center my={24}>
@@ -109,7 +144,7 @@ export function SignIn() {
         </Center>
       </VStack>
 
-      <VStack flex={1} bgColor="gray.100" p={10}>
+      <VStack flex={1} bgColor="gray.100" p={10} mt={2}>
         <Center>
           <Text color="gray.700" fontSize="sm" fontFamily="body" mb={4}>
             Ainda não tem acesso?
